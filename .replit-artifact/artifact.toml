@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "부산광역시인권센터 OX 퀴즈"
+description = "부산광역시인권센터 부스 행사에서 사용하는 모바일 OX 퀴즈 앱입니다. 인권 퀴즈, 점수 확인, 럭키드로우 직원 인증, 뉴스레터 연결과 운영자용 문항 편집을 제공합니다."
+version = "1.0.0"
+id = "artifacts/busan-human-rights-quiz"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20726
+
+[services.development]
+run = "pnpm --filter @workspace/busan-human-rights-quiz run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/busan-human-rights-quiz", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/busan-human-rights-quiz/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20726"
+BASE_PATH = "/"

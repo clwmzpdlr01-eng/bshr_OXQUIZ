@@ -1,0 +1,34 @@
+Create a brand new, highly polished, and friendly mobile web application for the "부산광역시인권센터" street booth OX quiz event.
+
+### 1. Design & Color Theme (Bright, Friendly, Warm):
+- Abandon dark, heavy, or gloomy colors. 
+- Use a bright, clean, friendly, and warm pastel/modern color palette (clean soft ivory/white background, warm peach, soft sky blue, or friendly mint/coral highlights) to make it welcoming for university students and citizens.
+- Mobile-first responsive layout with clean spacing, friendly typography, and intuitive touch targets.
+
+### 2. Landing Page & Official Content:
+- Official Slogan: The center's official slogan must be the core headline prominently displayed on the landing page: "모두가 평등하고 존엄한 인간, 함께하는 인권도시 부산".
+- Center Business Information (Use these exact descriptions in a warm, friendly, and conversational Korean tone):
+  1. 옹호 사업: "인권침해 상담과 무료 법률상담을 지원하고, 유관기관과 연계한 든든한 지원 네트워크와 교류 사업을 펼치고 있어요."
+  2. 정책 사업: "시민인권모니터단을 운영하며, 부산시의 인권 현안과 실태를 꼼꼼히 조사하고 더 나은 정책을 연구하고 있답니다."
+  3. 교육 사업: "시민분들을 직접 찾아가는 인권교육은 물론, 부산의 지방공사·공단과 출연출자기관의 인권경영선언 추진까지 돕고 있어요."
+  4. 문화 사업: "부산인권주간과 세계인권선언의 날 기념행사를 열고, 인권공모전 개최와 뉴스레터 발간으로 다채로운 인권 문화를 만들어가고 있어요."
+- Start Button: "3분 인권 OX 퀴즈 풀고 럭키드로우 뽑기 도전하기!"
+
+### 3. OX Quiz Page (Mixed O and X Answers for Fun):
+- Total 5 questions with a progress bar. Include a balanced mix of 'O' and 'X' correct answers to keep it engaging.
+- Instant feedback with detailed explanations in Korean upon clicking O or X.
+- Mandatory 2-second delay after answering before the [다음 문제] button unlocks.
+
+- Quiz Data (Balanced O & X):
+  * Q1 (O): "부산광역시인권센터의 '무료 법률상담'은 인권침해 및 차별 상담뿐만 아니라 유관기관 연계 서비스도 함께 지원한다." | Answer: O | Exp: "그렇습니다! 센터는 인권침해 및 법률상담을 진행하고 필요시 유관기관과 연계하여 지원합니다."
+  * Q2 (X): "인권은 대한민국 국민이거나 특정 조건을 갖춘 사람에게만 주어지는 권리이며, 외국인이나 이주민에게는 적용되지 않는다." | Answer: X | Exp: "인권은 국적, 인종, 성별과 상관없이 '인간이라는 이유만으로' 누구나 가지는 보편적 권리입니다."
+  * Q3 (O): "찾아가는 시민인권교육이나 지방공사 등의 인권경영선언 추진은 센터의 주요 교육 사업에 해당한다." | Answer: O | Exp: "맞습니다! 시민 대상 교육뿐만 아니라 공공기관 및 지방공사의 인권경영 확산을 위한 교육·지원도 활발히 펼치고 있습니다."
+  * Q4 (X): "단기 아르바이트생에게도 '수습 기간(3개월 미만)' 명목으로 최저임금의 90%만 주는 것은 적법하다." | Answer: X | Exp: "1년 미만 근로계약이거나 단순 노무 종사자는 수습 기간이라도 최저임금 100% 전액 지급이 원칙입니다."
+  * Q5 (O): "부산인권주간 운영과 세계인권선언의 날 기념행사, 인권공모전은 시민들이 참여할 수 있는 대표적인 문화 사업이다." | Answer: O | Exp: "맞습니다! 매년 인권주간과 공모전 등을 통해 다채로운 문화 행사를 운영하고 있습니다."
+
+### 4. Result, Verification & Admin (Crucial App Logic):
+- Score Calculation & Display.
+- LocalStorage 1-time participation limit per device ("이미 참여하셨습니다!").
+- Staff Verification: 4-digit PIN input. Correct PIN ("1472") unlocks "럭키드로우 뽑기 기회 획득!".
+- Newsletter Button: Explicitly labeled as "뉴스레터 구독하러 가기" linking to "https://busanhumanrights.or.kr/etc/sub1.php".
+- Admin Panel: Protected by password "1472", allowing staff to edit quiz questions and answers dynamically.
