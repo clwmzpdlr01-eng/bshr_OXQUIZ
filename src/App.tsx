@@ -329,9 +329,9 @@ function QuizPage() {
       <div className="booth-shell px-5 pb-10 pt-5 md:px-8 md:pt-10">
         <div className="flex items-center justify-between">
           <Link href="/" className="focus-ring flex items-center gap-1 text-sm font-bold text-[#183a60]/60" data-testid="link-quiz-back"><ArrowLeft size={17} /> 처음으로</Link>
-          <span className="text-xs font-extrabold text-[#183a60]/55" data-testid="text-progress">{String(current + 1).padStart(2, '0')} / 05</span>
+          <span className="text-xs font-extrabold text-[#183a60]/55" data-testid="text-progress">{String(current + 1).padStart(2, '0')} / {String(questions.length).padStart(2, '0')}</span>
         </div>
-        <div className="mt-5 h-2 rounded-full bg-[#183a60]/10"><div className="h-full rounded-full bg-[#e8003d] transition-all duration-500" style={{ width: `${((current + 1) / 5) * 100}%` }} /></div>
+        <div className="mt-5 h-2 rounded-full bg-[#183a60]/10"><div className="h-full rounded-full bg-[#e8003d] transition-all duration-500" style={{ width: `${((current + 1) / questions.length) * 100}%` }} /></div>
         <div className="mx-auto mt-12 max-w-2xl">
           <div className="flex items-center gap-2 text-xs font-extrabold tracking-[.16em] text-[#e8003d]"><span className="h-2 w-2 rounded-full bg-[#e8003d]" /> 오늘의 인권 한 문장</div>
           <h1 className="mt-5 font-serif text-[2rem] font-bold leading-[1.35] tracking-[-.07em] md:text-4xl" data-testid={`text-question-${question.id}`}>{question.statement}</h1>
@@ -393,7 +393,7 @@ function ResultPage() {
               <strong className="font-serif text-8xl leading-none text-[#183a60]" data-testid="text-score">{result.score}</strong><span className="pb-2 text-lg font-bold text-[#183a60]/60">점</span>
             </div>
             <p className="mt-4 text-base font-extrabold" data-testid="text-score-summary">총 100점 중 {result.score}점입니다!</p>
-            <p className="mt-5 text-sm leading-6 text-[#183a60]/65">{result.score >= 80 ? '인권을 바라보는 눈이 아주 따뜻하네요.' : '정답보다 중요한 건, 오늘 한 번 더 생각해 본 마음이에요.'}</p>
+            <p className="mt-5 text-sm leading-6 text-[#183a60]/65">{result.score >= 60 ? '인권을 바라보는 눈이 아주 따뜻하네요.' : '정답보다 중요한 건, 오늘 한 번 더 생각해 본 마음이에요.'}</p>
           </section>
 
           <section className="ticket-notch relative mt-10 rounded-2xl border border-[#183a60]/12 bg-white p-6" data-testid="section-staff-verification">
