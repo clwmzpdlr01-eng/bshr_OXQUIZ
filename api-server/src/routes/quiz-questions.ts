@@ -24,9 +24,9 @@ function isQuestion(value: unknown): value is QuizQuestionInput {
 }
 
 function readQuestions(value: unknown): QuizQuestionInput[] | null {
-  if (!Array.isArray(value) || value.length !== 5 || !value.every(isQuestion)) return null;
+  if (!Array.isArray(value) || value.length !== 3 || !value.every(isQuestion)) return null;
   const ids = new Set(value.map(question => question.id));
-  return ids.size === 5 ? value : null;
+  return ids.size === 3 ? value : null;
 }
 
 function isAdmin(req: { header(name: string): string | undefined }) {
@@ -53,7 +53,7 @@ router.put("/quiz-questions", async (req, res) => {
 
   const questions = readQuestions(req.body?.questions);
   if (!questions) {
-    res.status(400).json({ message: "문항은 5개이며 형식이 올바라야 합니다." });
+    res.status(400).json({ message: "문항은 3개이며 형식이 올바라야 합니다." });
     return;
   }
 
