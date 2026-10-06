@@ -45,11 +45,9 @@ type StoredResult = {
 };
 
 const defaultQuestions: QuizQuestion[] = [
-  { id: 1, statement: "친구의 얼굴이 나온 재미있는 사진이나 동영상을 당사자 동의 없이 장난삼아 단톡방이나 SNS에 올리는 것은 가벼운 장난이므로 초상권 침해에 해당하지 않는다.", answer: 'X', explanation: '비록 친한 친구 사이이거나 장난이라도, 당사자의 동의 없이 사진이나 영상을 무단으로 공유하는 것은 초상권과 개인정보 자기결정권을 침해하는 행동입니다.' },
-  { id: 2, statement: '인권은 대한민국 국민이거나 특정 조건을 갖춘 사람에게만 주어지는 권리이며, 외국인이나 이주민에게는 적용되지 않는다.', answer: 'X', explanation: "인권은 국적, 인종, 성별과 상관없이 '인간이라는 이유만으로' 누구나 가지는 보편적 권리입니다." },
+  { id: 1, statement: "친구 동의 없이 단톡방이나 SNS에 친구 사진을 올리는 것은 가벼운 장난이므로 초상권 침해에 해당하지 않는다.", answer: 'X', explanation: '비록 친한 친구 사이이거나 장난이라도, 당사자의 동의 없이 사진이나 영상을 무단으로 공유하는 것은 초상권과 개인정보 자기결정권을 침해하는 행동입니다.' },
+  { id: 2, statement: '인권은 대한민국 국민이어야 해당되니, 외국인이나 이주민에게는 적용되지 않는다.', answer: 'X', explanation: "인권은 국적, 인종, 성별과 상관없이 '인간이라는 이유만으로' 누구나 가지는 보편적 권리입니다." },
   { id: 3, statement: '부산광역시인권센터는 성인뿐만 아니라 청소년들도 학교나 일상생활에서 인권침해나 차별을 겪었을 때 무료로 상담을 받을 수 있는 곳이다', answer: 'O', explanation: '맞습니다! 센터에서는 누구나 겪을 수 있는 인권침해와 차별에 대해 상담과 무료 법률상담 연계 등을 지원하고 있어요.' },
-  { id: 4, statement: "공공장소나 식당, 카페 등에서 '노키즈존(No Kids Zone)'처럼 특정 연령대의 출입을 일률적으로 제한하는 것은 개인의 자유이므로 차별로 볼 수 없다.", answer: 'X', explanation: '틀렸습니다! 합리적 이유 없는 연령 제한을 일종의 차별 행위이자 인권 침해의 소지가 있는 것으로 보고 있습니다.' },
-  { id: 5, statement: '부산인권주간 운영과 세계인권선언의 날 기념행사, 인권공모전은 인권센터에서 주최하는 시민들이 참여할 수 있는 대표적인 문화 사업이다.', answer: 'O', explanation: '맞습니다! 인권공모전은 특히 유아·청소년과 일반 분야를 나누어 공모를 받기에 청소년을 위한 문화사업이기도 합니다!' },
 ];
 
 const QUESTIONS_KEY = 'busan-hr-quiz-questions';
@@ -62,7 +60,7 @@ const QUESTIONS_API = '/api/quiz-questions';
 
 function isValidQuestions(value: unknown): value is QuizQuestion[] {
   return Array.isArray(value)
-    && value.length === 5
+    && value.length === 3
     && value.every(question =>
       question
       && typeof question.id === 'number'
@@ -221,7 +219,7 @@ function LandingPage() {
           </div>
           <div className="relative mt-12 flex flex-wrap gap-2 text-xs font-bold text-[#294558]/75">
             <span className="flex items-center gap-1.5 rounded-full border border-[#183a60]/15 px-3 py-2"><Clock3 size={14} /> 약 3분</span>
-            <span className="flex items-center gap-1.5 rounded-full border border-[#183a60]/15 px-3 py-2"><CircleHelp size={14} /> 5문항</span>
+            <span className="flex items-center gap-1.5 rounded-full border border-[#183a60]/15 px-3 py-2"><CircleHelp size={14} /> 3문항</span>
           </div>
         </section>
 
