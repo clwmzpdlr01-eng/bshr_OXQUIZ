@@ -15,8 +15,6 @@ import {
   RotateCcw,
   Save,
   Scale,
-  ShieldCheck,
-  Ticket,
   X,
 } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -24,6 +22,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
+import logoUrl from './bhrc-logo.png';
 import './index.css';
 
 type QuizAnswer = 'O' | 'X';
@@ -136,6 +135,7 @@ function LandingPage() {
       <div className="booth-shell px-5 pb-8 pt-8 md:px-8 md:pt-14">
         <section className="relative overflow-hidden rounded-[2rem] border border-[#183a60]/12 bg-white px-5 py-9 text-[#183a60] md:px-14 md:py-14">
           <div className="relative max-w-2xl">
+            <img src={logoUrl} alt="부산광역시인권센터 BHRC" className="mb-7 h-10 w-auto md:mb-9 md:h-14" />
             <h1 className="break-keep font-serif text-[1.6rem] font-bold leading-[1.4] tracking-[-.05em] md:text-5xl md:tracking-[-.07em]">
               모두가 평등하고 <br className="md:hidden" />존엄한 인간,<br />함께하는 인권도시 부산
             </h1>
@@ -272,7 +272,7 @@ function QuizPage() {
           {answered && (
             <div className={`mt-4 rounded-2xl border-l-4 p-4 rise-in md:mt-6 md:p-5 ${correct ? 'border-[#138a63] bg-[#e3f7ed]' : 'border-[#e8003d] bg-[#ffe8ed]'}`} data-testid="status-answer-feedback">
               <div className={`flex items-center gap-2 text-sm font-black ${correct ? 'text-[#08704e]' : 'text-[#b60032]'}`}>{correct ? <Check size={18} /> : <X size={18} />} {correct ? '정답이에요' : '아쉬워요'}</div>
-              <p className="mt-2 break-keep text-sm leading-6 text-[#183a60]/80">{question.explanation}</p>
+              <p className="mt-2 break-keep text-base leading-7 text-[#183a60]/80">{question.explanation}</p>
               <button onClick={next} className="focus-ring mt-3 flex w-full items-center justify-between rounded-xl bg-[#183a60] px-4 py-3 text-sm font-extrabold text-[#f6f1e8]" data-testid="button-next-question">
                 {current === questions.length - 1 ? '결과 확인하기' : '다음 문항'} <ArrowRight size={17} />
               </button>
@@ -286,20 +286,12 @@ function QuizPage() {
 
 function ResultPage() {
   const [, navigate] = useLocation();
-  const [result, setResult] = useState<StoredResult | null>(readResult);
-  const [pin, setPin] = useState('');
-  const [pinError, setPinError] = useState(false);
+  const [result] = useState<StoredResult | null>(readResult);
   if (!result) {
     return <Shell><div className="mx-auto max-w-xl px-5 py-24 text-center"><h1 className="font-serif text-3xl font-bold">아직 퀴즈를 풀지 않았어요.</h1><Link href="/quiz" className="focus-ring mt-6 inline-flex rounded-xl bg-[#e8003d] px-5 py-3 text-sm font-bold text-white" data-testid="link-go-quiz">퀴즈 풀러 가기</Link></div></Shell>;
   }
-  const verify = () => {
-    if (pin === ACCESS_PASSWORD) {
-      const updated = { ...result, verified: true, luckyUnlocked: true };
-      localStorage.setItem(RESULT_KEY, JSON.stringify(updated));
-      setResult(updated);
-      setPinError(false);
-    } else setPinError(true);
-  };
+  const total = result.answers.length || 3;
+  const correctCount = Math.round(result.score * total / 100);
   return (
     <Shell>
       <div className="booth-shell px-5 pb-12 pt-5 md:px-8 md:pt-10">
@@ -307,40 +299,18 @@ function ResultPage() {
           <Link href="/" className="focus-ring flex w-fit items-center gap-1 text-sm font-bold text-[#183a60]/60" data-testid="link-result-home"><ArrowLeft size={17} /> 처음으로</Link>
           <section className="mt-8 overflow-hidden rounded-[2rem] border border-[#183a60]/12 bg-white px-6 py-8 text-[#183a60] md:px-10 md:py-10">
             <p className="text-xs font-extrabold tracking-[.16em] text-[#d8796f]">퀴즈 완료</p>
-            <h1 className="mt-4 font-serif text-3xl font-bold tracking-[-.08em]">오늘의 인권 감각,<br />잘 확인했어요.</h1>
+            <h1 className="mt-4 break-keep font-serif text-3xl font-bold tracking-[-.08em]">오늘의 인권 감각,<br />잘 확인했어요.</h1>
             <div className="mt-9 flex items-end gap-3">
               <strong className="font-serif text-8xl leading-none text-[#183a60]" data-testid="text-score">{result.score}</strong><span className="pb-2 text-lg font-bold text-[#183a60]/60">점</span>
             </div>
-            <p className="mt-4 text-base font-extrabold" data-testid="text-score-summary">총 100점 중 {result.score}점입니다!</p>
-            <p className="mt-5 text-sm leading-6 text-[#183a60]/65">{result.score >= 60 ? '인권을 바라보는 눈이 아주 따뜻하네요.' : '정답보다 중요한 건, 오늘 한 번 더 생각해 본 마음이에요.'}</p>
+            <p className="mt-4 text-lg font-extrabold" data-testid="text-score-summary">{total}문제 중 {correctCount}개 정답!</p>
+            <p className="mt-4 break-keep text-sm leading-6 text-[#183a60]/65">{result.score >= 60 ? '인권을 바라보는 눈이 아주 따뜻하네요.' : '정답보다 중요한 건, 오늘 한 번 더 생각해 본 마음이에요.'}</p>
           </section>
 
-          <section className="ticket-notch relative mt-10 rounded-2xl border border-[#183a60]/12 bg-white p-6" data-testid="section-staff-verification">
-            {result.luckyUnlocked ? (
-              <div className="stamp-in">
-                <div className="flex items-center gap-2 text-[#138a63]"><ShieldCheck size={19} /><span className="text-sm font-black">스태프 확인 완료</span></div>
-                <h2 className="mt-4 font-serif text-3xl font-bold tracking-[-.08em]">행운 추첨,<br />이제 참여할 수 있어요.</h2>
-                <p className="mt-3 text-sm leading-6 text-[#183a60]/65">이 화면을 스태프에게 보여주고 추첨함에 넣어주세요. 오늘의 작은 배움이 행운으로 이어집니다.</p>
-                <div className="mt-6 flex items-center gap-2 rounded-xl border border-[#138a63]/25 px-4 py-3 text-sm font-extrabold text-[#08704e]"><Ticket size={18} /> 추첨 참여 가능</div>
-              </div>
-            ) : (
-              <>
-                <div className="flex items-center gap-2 text-[#e8003d]"><LockKeyhole size={18} /><span className="text-xs font-extrabold tracking-[.12em]">스태프 확인 후 추첨 가능</span></div>
-                <h2 className="mt-4 text-xl font-extrabold">스태프에게 이 화면을 보여주세요.</h2>
-                <p className="mt-2 text-sm leading-6 text-[#183a60]/60">스태프가 확인한 4자리 인증번호를 입력하면 행운 추첨이 열립니다.</p>
-                <div className="mt-5 flex gap-2">
-                  <input value={pin} onChange={event => { setPin(event.target.value.replace(/\D/g, '').slice(0, 4)); setPinError(false); }} inputMode="numeric" placeholder="4자리 번호" className="focus-ring min-w-0 flex-1 rounded-xl border-2 border-[#183a60]/15 bg-[#f6f1e8] px-4 py-3 text-center text-lg font-black tracking-[.35em] outline-none focus:border-[#e8003d]" data-testid="input-staff-pin" />
-                  <button onClick={verify} disabled={pin.length !== 4} className="focus-ring rounded-xl bg-[#e8003d] px-5 text-sm font-extrabold text-white disabled:cursor-not-allowed disabled:opacity-35" data-testid="button-verify-pin">확인</button>
-                </div>
-                {pinError && <p className="mt-2 text-xs font-bold text-[#e8003d]" data-testid="status-pin-error">인증번호를 다시 확인해 주세요.</p>}
-              </>
-            )}
-          </section>
-
-          <section className="mt-10 rounded-2xl border border-[#183a60]/12 bg-white p-6">
+          <section className="mt-6 rounded-2xl border border-[#183a60]/12 bg-white p-6">
             <div className="flex items-center gap-2 text-[#183a60]"><Mail size={18} /><span className="text-xs font-extrabold tracking-[.12em]">센터 소식</span></div>
-            <h2 className="mt-3 text-lg font-extrabold">다음 인권 이야기도 만나보세요.</h2>
-            <p className="mt-2 text-sm leading-6 text-[#183a60]/70">부산광역시인권센터의 프로그램과 생활 속 인권 소식을 보내드려요.</p>
+            <h2 className="mt-3 break-keep text-lg font-extrabold">다음 인권 이야기도 만나보세요.</h2>
+            <p className="mt-2 break-keep text-sm leading-6 text-[#183a60]/70">부산광역시인권센터의 프로그램과 생활 속 인권 소식을 보내드려요.</p>
             <div className="mt-5 flex flex-col gap-2">
               <a href="https://www.instagram.com/bs_humanrights/" target="_blank" rel="noreferrer" className="focus-ring flex items-center gap-2 rounded-xl border-2 border-[#e98275] px-4 py-3 text-sm font-extrabold text-[#d8796f] transition-colors hover:bg-[#e98275] hover:text-white" data-testid="button-result-instagram"><Instagram size={16} /> 인스타그램 구독하기 <ChevronRight size={16} /></a>
               <a href="https://busanhumanrights.or.kr/etc/sub1.php" target="_blank" rel="noreferrer" onClick={() => localStorage.setItem(NEWSLETTER_KEY, 'yes')} className="focus-ring flex items-center gap-2 rounded-xl bg-[#183a60] px-4 py-3 text-sm font-extrabold text-[#f6f1e8]" data-testid="button-result-newsletter"><Mail size={16} /> 뉴스레터 구독하러 가기 <ChevronRight size={16} /></a>
