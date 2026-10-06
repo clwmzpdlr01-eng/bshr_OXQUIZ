@@ -1,12 +1,10 @@
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, Route, Router as WouterRouter, Switch, useLocation } from 'wouter';
 import {
   ArrowLeft,
   ArrowRight,
   Check,
   ChevronRight,
-  CircleHelp,
-  Clock3,
   GraduationCap,
   HandHeart,
   Instagram,
@@ -16,7 +14,6 @@ import {
   Pencil,
   RotateCcw,
   Save,
-  Settings,
   Scale,
   ShieldCheck,
   Ticket,
@@ -120,73 +117,12 @@ function readResult(): StoredResult | null {
 }
 
 function Shell({ children }: { children: ReactNode }) {
-  const [, navigate] = useLocation();
-  const [adminOpen, setAdminOpen] = useState(false);
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
-
-  const openAdmin = () => {
-    if (password === ACCESS_PASSWORD) {
-      sessionStorage.setItem(ADMIN_SESSION_KEY, 'yes');
-      setAdminOpen(false);
-      setPassword('');
-      setPasswordError(false);
-      navigate('/admin');
-    } else {
-      setPasswordError(true);
-    }
-  };
-
   return (
     <div className="paper-grain min-h-[100dvh] bg-white text-[#183a60]">
-      <header className="mx-auto flex w-full max-w-5xl items-center justify-end border-b border-[#183a60]/10 px-5 py-4 md:px-8">
-        <button
-          type="button"
-          onClick={() => { setAdminOpen(true); setPasswordError(false); }}
-          aria-label="관리자 설정"
-          title="관리자 설정"
-          className="focus-ring rounded-full p-2 text-[#183a60]/45 transition-colors hover:bg-[#183a60]/8 hover:text-[#183a60]"
-          data-testid="button-admin-settings"
-        >
-          <Settings size={17} strokeWidth={1.8} />
-        </button>
-      </header>
       <main>{children}</main>
-      <footer className="mx-auto max-w-5xl px-5 pb-8 pt-10 text-xs text-[#183a60]/50 md:px-8">
+      <footer className="mx-auto max-w-5xl px-5 pb-8 pt-6 text-xs text-[#183a60]/50 md:px-8">
         <div className="border-t border-[#183a60]/15 pt-5">부산광역시인권센터 · 인권 OX 퀴즈</div>
       </footer>
-      {adminOpen && (
-        <div className="admin-modal fixed inset-0 z-50 flex items-end justify-center bg-[#183a60]/25 p-4 sm:items-center" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
-          <button type="button" className="absolute inset-0 cursor-default" aria-label="관리자 모달 닫기" onClick={() => setAdminOpen(false)} />
-          <div className="admin-modal-card relative w-full max-w-sm rounded-2xl border border-[#183a60]/12 bg-white p-6 shadow-[0_18px_55px_rgba(24,58,96,.18)]">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#183a60]">
-                <Settings size={17} strokeWidth={1.8} />
-                <h2 id="admin-modal-title" className="text-sm font-extrabold">관리자 설정</h2>
-              </div>
-              <button type="button" onClick={() => setAdminOpen(false)} className="focus-ring rounded-full p-1 text-[#183a60]/45 hover:bg-[#183a60]/8" aria-label="닫기">
-                <X size={17} />
-              </button>
-            </div>
-            <p className="mt-4 text-sm leading-6 text-[#183a60]/60">관리자 비밀번호를 입력해 문항 편집 화면으로 이동합니다.</p>
-            <input
-              autoFocus
-              value={password}
-              onChange={event => { setPassword(event.target.value.replace(/\D/g, '').slice(0, 4)); setPasswordError(false); }}
-              onKeyDown={event => { if (event.key === 'Enter' && password.length === 4) openAdmin(); }}
-              inputMode="numeric"
-              maxLength={4}
-              placeholder="4자리 비밀번호"
-              className="focus-ring mt-5 w-full rounded-xl border border-[#183a60]/18 bg-white px-4 py-3 text-center text-lg font-black tracking-[.35em] outline-none focus:border-[#183a60]"
-              data-testid="input-admin-modal-password"
-            />
-            {passwordError && <p className="mt-2 text-xs font-bold text-[#b85c59]" data-testid="status-admin-modal-password-error">비밀번호를 다시 확인해 주세요.</p>}
-            <button onClick={openAdmin} disabled={password.length !== 4} className="focus-ring mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#183a60] px-4 py-3 text-sm font-extrabold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-35" data-testid="button-admin-modal-unlock">
-              관리자 화면 열기 <ArrowRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -197,37 +133,44 @@ function LandingPage() {
   const start = () => navigate('/quiz');
   return (
     <Shell>
-      <div className="booth-shell px-5 pb-8 pt-3 md:px-8 md:pt-10">
-        <section className="relative overflow-hidden rounded-[2rem] border border-[#183a60]/12 bg-white px-6 pb-9 pt-8 text-[#183a60] md:px-14 md:pb-14 md:pt-14">
+      <div className="booth-shell px-5 pb-8 pt-8 md:px-8 md:pt-14">
+        <section className="relative overflow-hidden rounded-[2rem] border border-[#183a60]/12 bg-white px-5 py-9 text-[#183a60] md:px-14 md:py-14">
           <div className="relative max-w-2xl">
-            <h1 className="max-w-[700px] font-serif text-[2.45rem] font-bold leading-[1.18] tracking-[-.08em] md:text-6xl">
-              모두가 평등하고 존엄한 인간,<br /><span className="slogan-accent">함께하는 인권도시 부산</span>
+            <h1 className="break-keep font-serif text-[1.6rem] font-bold leading-[1.4] tracking-[-.05em] md:text-5xl md:tracking-[-.07em]">
+              모두가 평등하고 <br className="md:hidden" />존엄한 인간,<br />함께하는 인권도시 부산
             </h1>
-            <p className="mt-6 max-w-[540px] text-[15px] leading-7 text-[#183a60]/70">3분 인권 OX 퀴즈로 우리 곁의 권리를 발견해 보세요. 다 풀고 나면 럭키드로우에도 도전할 수 있어요.</p>
             {result ? (
-              <div className="mt-8 space-y-3 md:w-[310px]">
-                <div className="rounded-2xl border-2 border-[#d8796f] bg-white/35 px-5 py-4 text-sm font-extrabold text-[#b85c59]" data-testid="status-already-participated">이미 참여하셨습니다!</div>
-                <button onClick={() => navigate('/result')} className="focus-ring flex w-full items-center justify-between rounded-2xl border-2 border-[#294558]/25 px-5 py-4 text-left text-sm font-extrabold text-[#294558] transition-colors hover:bg-white/35" data-testid="button-view-result">
-                  결과 확인하기 <ArrowRight size={20} />
+              <div className="mt-8 space-y-3 md:w-[360px]">
+                <div className="rounded-2xl border-2 border-[#d8796f] bg-white/35 px-5 py-4 text-base font-extrabold text-[#b85c59]" data-testid="status-already-participated">이미 참여하셨습니다!</div>
+                <button onClick={() => navigate('/result')} className="focus-ring flex w-full items-center justify-between rounded-2xl border-2 border-[#294558]/25 px-5 py-5 text-left text-lg font-extrabold text-[#294558] transition-colors hover:bg-white/35" data-testid="button-view-result">
+                  결과 확인하기 <ArrowRight size={22} />
                 </button>
               </div>
             ) : (
-              <button onClick={start} className="focus-ring mt-8 flex w-full items-center justify-between rounded-2xl bg-[#e98275] px-5 py-4 text-left font-extrabold text-white transition-transform hover:-translate-y-1 active:translate-y-1 md:w-[360px]" data-testid="button-start-quiz">
-                인권 OX 퀴즈 풀기 <ArrowRight size={20} />
+              <button onClick={start} className="focus-ring mt-9 flex w-full items-center justify-center gap-3 rounded-3xl bg-[#e8003d] px-6 py-7 text-2xl font-black text-white shadow-[0_8px_0_#9d002b] transition-transform active:translate-y-2 active:shadow-none md:w-[440px] md:text-3xl" data-testid="button-start-quiz">
+                퀴즈 시작하기 <ArrowRight size={30} strokeWidth={3} />
               </button>
             )}
           </div>
-          <div className="relative mt-12 flex flex-wrap gap-2 text-xs font-bold text-[#294558]/75">
-            <span className="flex items-center gap-1.5 rounded-full border border-[#183a60]/15 px-3 py-2"><Clock3 size={14} /> 약 3분</span>
-            <span className="flex items-center gap-1.5 rounded-full border border-[#183a60]/15 px-3 py-2"><CircleHelp size={14} /> 3문항</span>
+        </section>
+
+        <section className="mt-8 rounded-3xl border-2 border-dashed border-[#183a60]/25 px-5 py-6 md:flex md:items-center md:justify-between md:px-8">
+          <h2 className="text-lg font-extrabold">생활 속 인권 이야기를 더 받아볼까요?</h2>
+          <div className="mt-4 flex w-full flex-col gap-2 md:mt-0 md:w-auto">
+            <a href="https://www.instagram.com/bs_humanrights/" target="_blank" rel="noreferrer" className="focus-ring flex items-center justify-center gap-2 rounded-xl border-2 border-[#e98275] px-4 py-3 text-sm font-extrabold text-[#d8796f] transition-colors hover:bg-[#e98275] hover:text-white" data-testid="button-instagram">
+              <Instagram size={16} /> 인스타그램 구독하기 <ChevronRight size={16} />
+            </a>
+            <a href="https://busanhumanrights.or.kr/etc/sub1.php" target="_blank" rel="noreferrer" onClick={() => localStorage.setItem(NEWSLETTER_KEY, 'yes')} className="focus-ring flex items-center justify-center gap-2 rounded-xl border-2 border-[#183a60] px-4 py-3 text-sm font-extrabold transition-colors hover:bg-[#183a60] hover:text-[#f6f1e8]" data-testid="button-newsletter">
+              <><Mail size={16} /> 뉴스레터 구독하러 가기 <ChevronRight size={16} /></>
+            </a>
           </div>
         </section>
 
-        <section className="pb-16 pt-16 md:pb-24 md:pt-24">
+        <section className="pb-8 pt-12 md:pb-16 md:pt-20">
           <div className="max-w-2xl">
             <p className="text-xs font-extrabold tracking-[.16em] text-[#d8796f]">부산광역시인권센터</p>
-            <h2 className="mt-3 font-serif text-3xl font-bold tracking-[-.08em]">모두의 일상에<br />인권이 가까워지도록.</h2>
-            <p className="mt-4 text-sm leading-7 text-[#294558]/65">부산광역시인권센터는 누구나 존중받는 부산을 만들기 위해 상담과 교육, 정책과 문화 활동을 이어갑니다.</p>
+            <h2 className="mt-3 break-keep font-serif text-3xl font-bold tracking-[-.08em]">모두의 일상에<br />인권이 가까워지도록.</h2>
+            <p className="mt-4 break-keep text-sm leading-7 text-[#294558]/65">부산광역시인권센터는 누구나 존중받는 부산을 만들기 위해 상담과 교육, 정책과 문화 활동을 이어갑니다.</p>
           </div>
           <div className="mt-7 grid gap-4 sm:grid-cols-2">
             {[
@@ -244,26 +187,10 @@ function LandingPage() {
                   <span className="text-xs font-extrabold tracking-[.12em] text-[#d8796f]">{label}</span>
                 </div>
                 <h3 className="mt-5 text-lg font-extrabold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#29415b]/65">{description}</p>
+                <p className="mt-2 break-keep text-sm leading-6 text-[#29415b]/65">{description}</p>
               </article>
               );
             })}
-          </div>
-        </section>
-
-        <section className="rounded-3xl border-2 border-dashed border-[#183a60]/25 px-6 py-7 md:flex md:items-center md:justify-between md:px-8">
-          <div>
-            <div className="flex items-center gap-2 text-[#e8003d]"><Mail size={17} /><span className="text-xs font-extrabold tracking-[.12em]">센터 소식</span></div>
-            <h2 className="mt-2 text-lg font-extrabold">생활 속 인권 이야기를 더 받아볼까요?</h2>
-            <p className="mt-1 text-sm text-[#183a60]/60">부산광역시인권센터의 새 소식과 프로그램을 전해드려요.</p>
-          </div>
-          <div className="mt-5 flex w-full flex-col gap-2 md:mt-0 md:w-auto">
-            <a href="https://www.instagram.com/bs_humanrights/" target="_blank" rel="noreferrer" className="focus-ring flex items-center justify-center gap-2 rounded-xl border-2 border-[#e98275] px-4 py-3 text-sm font-extrabold text-[#d8796f] transition-colors hover:bg-[#e98275] hover:text-white" data-testid="button-instagram">
-              <Instagram size={16} /> 인스타그램 구독하기 <ChevronRight size={16} />
-            </a>
-            <a href="https://busanhumanrights.or.kr/etc/sub1.php" target="_blank" rel="noreferrer" onClick={() => localStorage.setItem(NEWSLETTER_KEY, 'yes')} className="focus-ring flex items-center justify-center gap-2 rounded-xl border-2 border-[#183a60] px-4 py-3 text-sm font-extrabold transition-colors hover:bg-[#183a60] hover:text-[#f6f1e8]" data-testid="button-newsletter">
-              <><Mail size={16} /> 뉴스레터 구독하러 가기 <ChevronRight size={16} /></>
-            </a>
           </div>
         </section>
       </div>
@@ -278,7 +205,7 @@ function QuizPage() {
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [selected, setSelected] = useState<QuizAnswer | null>(null);
-  const [remaining, setRemaining] = useState(0);
+  const lockedRef = useRef(false);
   const question = questions?.[current];
   const answered = selected !== null;
   const correct = selected === question?.answer;
@@ -294,20 +221,13 @@ function QuizPage() {
     return () => window.removeEventListener(QUESTIONS_UPDATED_EVENT, syncQuestions);
   }, []);
 
-  useEffect(() => {
-    if (!answered) return;
-    setRemaining(2);
-    const timer = window.setInterval(() => setRemaining(value => Math.max(0, value - 1)), 1000);
-    return () => window.clearInterval(timer);
-  }, [answered, current]);
-
   const choose = (answer: QuizAnswer) => {
-    if (answered) return;
+    if (answered || lockedRef.current) return;
+    lockedRef.current = true;
     setSelected(answer);
     setAnswers(values => [...values, answer]);
   };
   const next = () => {
-    if (remaining > 0) return;
     if (!questions) return;
     if (current === questions.length - 1) {
       const finalAnswers = answers;
@@ -317,7 +237,8 @@ function QuizPage() {
       navigate('/result');
       return;
     }
-    setCurrent(value => value + 1);
+    lockedRef.current = false;
+    setCurrent(current + 1);
     setSelected(null);
   };
 
@@ -331,18 +252,16 @@ function QuizPage() {
           <Link href="/" className="focus-ring flex items-center gap-1 text-sm font-bold text-[#183a60]/60" data-testid="link-quiz-back"><ArrowLeft size={17} /> 처음으로</Link>
           <span className="text-xs font-extrabold text-[#183a60]/55" data-testid="text-progress">{String(current + 1).padStart(2, '0')} / {String(questions.length).padStart(2, '0')}</span>
         </div>
-        <div className="mt-5 h-2 rounded-full bg-[#183a60]/10"><div className="h-full rounded-full bg-[#e8003d] transition-all duration-500" style={{ width: `${((current + 1) / questions.length) * 100}%` }} /></div>
-        <div className="mx-auto mt-12 max-w-2xl">
-          <div className="flex items-center gap-2 text-xs font-extrabold tracking-[.16em] text-[#e8003d]"><span className="h-2 w-2 rounded-full bg-[#e8003d]" /> 오늘의 인권 한 문장</div>
-          <h1 className="mt-5 font-serif text-[2rem] font-bold leading-[1.35] tracking-[-.07em] md:text-4xl" data-testid={`text-question-${question.id}`}>{question.statement}</h1>
-          <p className="mt-4 text-sm text-[#183a60]/55">이 문장이 맞다고 생각하면 O, 아니라면 X를 눌러주세요.</p>
-          <div className="mt-10 grid grid-cols-2 gap-3 md:gap-5">
+        <div className="mt-4 h-2 rounded-full bg-[#183a60]/10"><div className="h-full rounded-full bg-[#e8003d] transition-all duration-500" style={{ width: `${((current + 1) / questions.length) * 100}%` }} /></div>
+        <div className="mx-auto mt-6 max-w-2xl md:mt-12">
+          <h1 className="break-keep font-serif text-[1.5rem] font-bold leading-[1.5] tracking-[-.04em] md:text-4xl md:leading-[1.35] md:tracking-[-.07em]" data-testid={`text-question-${question.id}`}>{question.statement}</h1>
+          <div className="mt-6 grid grid-cols-2 gap-3 md:mt-10 md:gap-5">
             {(['O', 'X'] as QuizAnswer[]).map(value => {
               const isSelected = selected === value;
               const isRight = answered && value === question.answer;
               const isWrong = answered && isSelected && !correct;
               return (
-                <button key={value} onClick={() => choose(value)} disabled={answered} className={`focus-ring relative flex aspect-[1.12] items-center justify-center rounded-3xl border-2 text-7xl font-black transition-transform duration-200 md:text-8xl ${isRight ? 'border-[#138a63] bg-[#c6eedc] text-[#08704e] stamp-in' : isWrong ? 'border-[#e8003d] bg-[#ffd5df] text-[#b60032]' : isSelected ? 'border-[#183a60] bg-[#183a60] text-white' : 'border-[#183a60]/15 bg-[#fffdf8] text-[#183a60] hover:-translate-y-1 hover:border-[#e8003d] hover:text-[#e8003d]'}`} data-testid={`button-answer-${value}`}>
+                <button key={value} onClick={() => choose(value)} disabled={answered} className={`focus-ring relative flex aspect-[1.9] items-center justify-center rounded-3xl border-2 text-6xl font-black transition-transform duration-200 md:aspect-[1.12] md:text-8xl ${isRight ? 'border-[#138a63] bg-[#c6eedc] text-[#08704e] stamp-in' : isWrong ? 'border-[#e8003d] bg-[#ffd5df] text-[#b60032]' : isSelected ? 'border-[#183a60] bg-[#183a60] text-white' : 'border-[#183a60]/15 bg-[#fffdf8] text-[#183a60] active:scale-95 md:hover:-translate-y-1 md:hover:border-[#e8003d] md:hover:text-[#e8003d]'}`} data-testid={`button-answer-${value}`}>
                   {value}
                   {isRight && <span className="absolute right-3 top-3 rounded-full bg-[#138a63] p-1 text-white"><Check size={15} /></span>}
                   {isWrong && <span className="absolute right-3 top-3 rounded-full bg-[#e8003d] p-1 text-white"><X size={15} /></span>}
@@ -351,11 +270,11 @@ function QuizPage() {
             })}
           </div>
           {answered && (
-            <div className={`mt-6 rounded-2xl border-l-4 p-5 rise-in ${correct ? 'border-[#138a63] bg-[#e3f7ed]' : 'border-[#e8003d] bg-[#ffe8ed]'}`} data-testid="status-answer-feedback">
+            <div className={`mt-4 rounded-2xl border-l-4 p-4 rise-in md:mt-6 md:p-5 ${correct ? 'border-[#138a63] bg-[#e3f7ed]' : 'border-[#e8003d] bg-[#ffe8ed]'}`} data-testid="status-answer-feedback">
               <div className={`flex items-center gap-2 text-sm font-black ${correct ? 'text-[#08704e]' : 'text-[#b60032]'}`}>{correct ? <Check size={18} /> : <X size={18} />} {correct ? '정답이에요' : '아쉬워요'}</div>
-              <p className="mt-2 text-sm leading-6 text-[#183a60]/80">{question.explanation}</p>
-              <button onClick={next} disabled={remaining > 0} className="focus-ring mt-4 flex w-full items-center justify-between rounded-xl bg-[#183a60] px-4 py-3 text-sm font-extrabold text-[#f6f1e8] transition-opacity disabled:cursor-wait disabled:opacity-55" data-testid="button-next-question">
-                {current === questions.length - 1 ? '결과 확인하기' : remaining > 0 ? `${remaining}초 후 다음 문항` : '다음 문항'} <ArrowRight size={17} />
+              <p className="mt-2 break-keep text-sm leading-6 text-[#183a60]/80">{question.explanation}</p>
+              <button onClick={next} className="focus-ring mt-3 flex w-full items-center justify-between rounded-xl bg-[#183a60] px-4 py-3 text-sm font-extrabold text-[#f6f1e8]" data-testid="button-next-question">
+                {current === questions.length - 1 ? '결과 확인하기' : '다음 문항'} <ArrowRight size={17} />
               </button>
             </div>
           )}
